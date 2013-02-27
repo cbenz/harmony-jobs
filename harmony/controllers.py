@@ -22,7 +22,12 @@ def create(req):
 @wsgify
 def jobs(req):
     slug = req.urlvars.get('slug')
+
+    # FIXME: should be done one time, when project is created
     job = Jobs.find_one({'slug': slug})
+    job.status = True
+    job.save()
+
     return templates.render(
         req.ctx,
         '/jobs.mako',
