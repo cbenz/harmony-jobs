@@ -36,5 +36,8 @@
       </tbody>
     </table>
 
-    
+    <a class="btn btn-danger" href="/projects/remove?id=${job._id}">
+      <i class="icon-trash icon-white"></i> Supprimer le projet
+    </a>
+
 </%block>

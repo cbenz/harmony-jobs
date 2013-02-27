@@ -22,7 +22,7 @@ class Jobs(Mapper, Wrapper):
         if self.upload_at is None:
             self.upload_at = datetime.datetime.utcnow()
 
-        # find a unique slug base on filename
+        # find a unique slug based on filename
         if self.slug is None:
             slug = slugify(self.filename)
             distinguish = 1

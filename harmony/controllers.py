@@ -26,6 +26,7 @@ def jobs(req):
     # FIXME: should be done one time, when project is created
     job = Jobs.find_one({'slug': slug})
     job.status = True
+    job.step = 0
     job.save()
 
     return templates.render(
@@ -49,8 +50,10 @@ def upload(req):
         else:
             job = Jobs()
             job.filename = fs.filename
+            job.status = False
             job_id = job.save(safe=True)
 
+            # FIXME: check if upload folder exists
             f = open(os.path.join(req.ctx.conf['cache_dir'], 'upload', str(job_id)), 'w+')
             f.write(fs.file.read())
             f.close()
@@ -72,7 +75,16 @@ def remove(req):
     path = os.path.join(req.ctx.conf['cache_dir'], 'upload', obj_id)
     os.remove(path)
 
-    Jobs.remove({'_id': bson.objectid.ObjectId(obj_id)})
+    job = Jobs.find_one({'_id': bson.objectid.ObjectId(obj_id)})
+    if job.status:
+        # if status is True, remove request comes from jobs page
+        # a redirect to homepage is needed
+        job.delete()
+        return wsgi_helpers.redirect(req.ctx, location='/')
+    else:
+        # if status is False, project is not yet created
+        # remove request comes from create page
+        job.delete()
 
 
 @wsgify
@@ -91,6 +103,6 @@ def make_router():
         ('GET', '^/?$', index),
         ('GET', '^/projects/(?P<slug>.+)/jobs', jobs),
         ('GET', '^/projects/create', create),
-        ('GET', '^/projects/remove', remove),
+        ('GET', '^/projects/remove/?$', remove),
         ('POST', '^/projects/upload', upload),
     )
