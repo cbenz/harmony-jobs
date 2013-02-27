@@ -37,12 +37,12 @@
         <i class="icon-remove icon-white"></i> Annuler
       </a>
 
-      <a class="btn btn-danger" id="removefile" style="display: none" href="#">
-        <i class="icon-trash icon-white"></i> Supprimer le fichier
-      </a>
-
       <a class="btn btn-primary" id="create" style="display: none" href="">
         <i class="icon-play icon-white"></i> Créer le projet
+      </a>
+
+      <a class="btn btn-danger" id="removefile" style="display: none" href="#">
+        <i class="icon-trash icon-white"></i> Supprimer le fichier
       </a>
 
       <table id="fileslist" class="table table-bordered" style="display: none">
