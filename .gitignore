@@ -1,0 +1,7 @@
+cache/
+data/
+development-*.ini
+*.egg-info
+*.pyc
+*.pyo
+*~
