@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
 
+import babel.dates
 import bson
+import datetime
 import formencode
-import simplejson as json
 import os
+import simplejson as json
+import urlparse
+from pytz import timezone
 from webob.dec import wsgify
 
 from . import conv, router, templates, wsgi_helpers
@@ -16,6 +20,26 @@ def create(req):
     return templates.render(
         req.ctx,
         '/create.mako',
+    )
+
+
+@wsgify
+def feed(req):
+    jobs = Jobs.find()
+    entries = []
+    for job in jobs:
+        entry = job.to_bson()
+        entry['link'] = urlparse.urljoin(req.application_url, '%s/view' % job.slug)
+        entry['upload_at_formated'] = babel.dates.format_datetime(
+            job.upload_at, 'yyyy-MM-ddTHH:mm:ssZ', tzinfo = timezone('Europe/Paris'), locale = 'fr_FR')
+        entries.append(entry)
+    return templates.render(
+        req.ctx,
+        '/feed.mako',
+        entries = entries,
+        feed_url = 'http://localhost',
+        feed_updated = babel.dates.format_datetime(
+            datetime.datetime.utcnow(), 'yyyy-MM-ddTHH:mm:ssZ', tzinfo = timezone('Europe/Paris'), locale = 'fr_FR')
     )
 
 
@@ -103,6 +127,7 @@ def make_router():
         ('GET', '^/?$', index),
         ('GET', '^/projects/(?P<slug>.+)/jobs', jobs),
         ('GET', '^/projects/create', create),
+        ('GET', '^/projects/feed', feed),
         ('GET', '^/projects/remove/?$', remove),
         ('POST', '^/projects/upload', upload),
     )
