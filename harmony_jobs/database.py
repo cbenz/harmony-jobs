@@ -9,8 +9,8 @@ import suq.monpyjama
 
 
 def ensure_indexes(ctx):
-    ctx.db.harmony.ensure_index([('upload_at', pymongo.ASCENDING)])
-    ctx.db.harmony.ensure_index([('slug', pymongo.ASCENDING)], unique=True)
+    ctx.db.jobs.ensure_index([('upload_at', pymongo.ASCENDING)])
+    ctx.db.jobs.ensure_index([('slug', pymongo.ASCENDING)], unique=True)
 
 
 def load_database(ctx):
