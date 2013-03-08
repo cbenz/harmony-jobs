@@ -32,9 +32,9 @@ setup(
     include_package_data=True,
     install_requires=[
         'Biryani1 >= 0.9dev',
-        'pymongo',
-        'suq-fulltextsearch',
-        'suq-monpyjama',
+        'pymongo >= 2.0',
+        'pytz >= 2010b',
+        'suq-monpyjama >= 0.8',
         'WebError >= 0.10',
         'WebOb >= 1.1',
         ],
