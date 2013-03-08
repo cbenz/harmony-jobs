@@ -50,8 +50,8 @@ def load_configuration(global_conf, app_conf):
                 urlparse.urljoin(conf['cdn.url'], '/bootstrap/2.2.2/css/bootstrap.min.css')
                 ),
             'cdn.bootstrap.js': default(urlparse.urljoin(conf['cdn.url'], '/bootstrap/2.2.2/js/bootstrap.js')),
-            'cdn.html5shiv.js': default(urlparse.urljoin(conf['cdn.url'], '/html5shiv/html5.js')),
-            'cdn.jquery.js': default(urlparse.urljoin(conf['cdn.url'], '/jquery/jquery-1.8.3.min.js')),
+            'cdn.html5shiv.js': default(urlparse.urljoin(conf['cdn.url'], '/html5shiv/html5shiv.js')),
+            'cdn.jquery.js': default(urlparse.urljoin(conf['cdn.url'], '/jquery/jquery-1.9.1.min.js')),
             #'cdn.select2.js': default(urlparse.urljoin(conf['cdn.url'], '/select2/3.2/select2.min.js')),
             #'cdn.select2.css': default(urlparse.urljoin(conf['cdn.url'], '/select2/3.2/select2.css')),
             'cdn.underscore.js': default(urlparse.urljoin(conf['cdn.url'], '/underscore/underscore.js')),
