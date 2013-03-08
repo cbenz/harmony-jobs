@@ -8,8 +8,8 @@ import bson
 from paste.deploy import loadapp
 import pymongo
 
-import catalogue
-from catalogue.model import Training
+import harmony_jobs
+from harmony_jobs.model import Jobs
 
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
