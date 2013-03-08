@@ -27,7 +27,7 @@ def load_configuration(global_conf, app_conf):
             'cdn.url': default('http://localhost:7000'),
             'custom_templates_dir': default(None),
             'database.host_name': default('localhost'),
-            'database.name': default('harmony'),
+            'database.name': default('harmony_jobs'),
             'database.port': pipe(input_to_int, default(27017)),
             'debug': pipe(guess_bool, default(False)),
             'global_conf': default(global_conf),
