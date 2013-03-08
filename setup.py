@@ -27,7 +27,7 @@ setup(
     description=doc_lines[0],
     entry_points="""
         [paste.app_factory]
-        main = harmony.application:make_app
+        main = harmony_jobs.application:make_app
         """,
     include_package_data=True,
     install_requires=[
@@ -39,14 +39,13 @@ setup(
         'WebOb >= 1.1',
         ],
     keywords='harmony jobs osm shapefile drop gis',
-#    license=u'http://www.fsf.org/licensing/licenses/agpl-3.0.html',
+    license=u'http://www.fsf.org/licensing/licenses/agpl-3.0.html',
     long_description='\n'.join(doc_lines[2:]),
     name=u'Harmony-Jobs',
-    namespace_packages = ['harmony'],
     packages=find_packages(),
     paster_plugins=['PasteScript'],
     setup_requires=['PasteScript >= 1.6.3'],
-    url=u'http://harmony-jobs.donnees-libres.fr/',
+    url=u'https://github.com/valos/harmony-jobs',
     version='0.1',
     zip_safe=False,
     )
