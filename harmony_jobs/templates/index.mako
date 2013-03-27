@@ -35,14 +35,14 @@
     </div>
   </div>
 
-  <table id="jobs" class="table table-bordered table-striped">
+  <table id="projects" class="table table-bordered table-striped">
     <thead>
       <tr>
         <th>Derniers projets</th>
       </tr>
     </thead>
     <tbody>
-% for job in jobs:
+% for project in projects:
       <tr>
         <td>
           Étape 1 / 10

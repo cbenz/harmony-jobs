@@ -9,8 +9,8 @@ from biryani1.objectconv import object_to_clean_dict
 from suq.monpyjama import Mapper, Wrapper
 
 
-class Jobs(Mapper, Wrapper):
-    collection_name = 'jobs'
+class Projects(Mapper, Wrapper):
+    collection_name = 'projects'
 
     filename = None
     slug = None
@@ -28,13 +28,13 @@ class Jobs(Mapper, Wrapper):
             distinguish = 1
             while True:
                 proposal = slug if distinguish == 1 else '%s-%d' % (slug, distinguish)
-                if not Jobs.find_one({'slug': proposal}):
+                if not Projects.find_one({'slug': proposal}):
                     slug = proposal
                     break
                 distinguish += 1
             self.slug = slug
 
-        return super(Jobs, self).save(*args, **kwargs)
+        return super(Projects, self).save(*args, **kwargs)
 
     def to_bson(self):
         return check(object_to_clean_dict(self))

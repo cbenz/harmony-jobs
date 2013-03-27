@@ -16,7 +16,7 @@
 
     <h1>Projet SIG</h1>
     <hr>
-    <h3>Fichier ${job.filename}</h3>
+    <h3>Fichier ${project.filename}</h3>
 
     <table id="jobs" class="table table-bordered">
       <thead>
@@ -36,7 +36,7 @@
       </tbody>
     </table>
 
-    <a class="btn btn-danger" href="/projects/remove?id=${job._id}">
+    <a class="btn btn-danger" href="/projects/remove?id=${project._id}">
       <i class="icon-trash icon-white"></i> Supprimer le projet
     </a>
 

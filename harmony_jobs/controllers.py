@@ -12,7 +12,7 @@ from pytz import timezone
 from webob.dec import wsgify
 
 from . import conv, router, templates, wsgi_helpers
-from .model import Jobs
+from .model import Projects
 
 
 @wsgify
@@ -25,13 +25,13 @@ def create(req):
 
 @wsgify
 def feed(req):
-    jobs = Jobs.find()
+    projects = Projects.find()
     entries = []
-    for job in jobs:
-        entry = job.to_bson()
-        entry['link'] = urlparse.urljoin(req.application_url, '%s/view' % job.slug)
+    for project in projects:
+        entry = project.to_bson()
+        entry['link'] = urlparse.urljoin(req.application_url, '%s/view' % project.slug)
         entry['upload_at_formated'] = babel.dates.format_datetime(
-            job.upload_at, 'yyyy-MM-ddTHH:mm:ssZ', tzinfo = timezone('Europe/Paris'), locale = 'fr_FR')
+            project.upload_at, 'yyyy-MM-ddTHH:mm:ssZ', tzinfo = timezone('Europe/Paris'), locale = 'fr_FR')
         entries.append(entry)
     return templates.render(
         req.ctx,
@@ -48,15 +48,15 @@ def jobs(req):
     slug = req.urlvars.get('slug')
 
     # FIXME: should be done one time, when project is created
-    job = Jobs.find_one({'slug': slug})
-    job.status = True
-    job.step = 0
-    job.save()
+    project = Projects.find_one({'slug': slug})
+    project.status = True
+    project.step = 0
+    project.save()
 
     return templates.render(
         req.ctx,
         '/jobs.mako',
-        job = job
+        project = project
     )
 
 
@@ -72,20 +72,20 @@ def upload(req):
         except formencode.api.Invalid, e:
             print e
         else:
-            job = Jobs()
-            job.filename = fs.filename
-            job.status = False
-            job_id = job.save(safe=True)
+            project = Projects()
+            project.filename = fs.filename
+            project.status = False
+            project_id = project.save(safe=True)
 
             # FIXME: check if upload folder exists
-            f = open(os.path.join(req.ctx.conf['cache_dir'], 'upload', str(job_id)), 'w+')
+            f = open(os.path.join(req.ctx.conf['cache_dir'], 'upload', str(project_id)), 'w+')
             f.write(fs.file.read())
             f.close()
 
             result = [dict(
-                id = str(job_id),
-                name = job.filename,
-                slug = job.slug,
+                id = str(project_id),
+                name = project.filename,
+                slug = project.slug,
                 size = len(fs.file.read()),
                 )]
         
@@ -99,25 +99,25 @@ def remove(req):
     path = os.path.join(req.ctx.conf['cache_dir'], 'upload', obj_id)
     os.remove(path)
 
-    job = Jobs.find_one({'_id': bson.objectid.ObjectId(obj_id)})
-    if job.status:
-        # if status is True, remove request comes from jobs page
+    project = Projects.find_one({'_id': bson.objectid.ObjectId(obj_id)})
+    if project.status:
+        # if status is True, remove request comes from projects page
         # a redirect to homepage is needed
-        job.delete()
+        project.delete()
         return wsgi_helpers.redirect(req.ctx, location='/')
     else:
         # if status is False, project is not yet created
         # remove request comes from create page
-        job.delete()
+        project.delete()
 
 
 @wsgify
 def index(req):
-    jobs = Jobs.find()
+    projects = Projects.find()
     return templates.render(
         req.ctx,
         '/index.mako',
-        jobs = jobs,
+        projects = projects,
     )
 
 

@@ -11,7 +11,7 @@
 <%block name="scripts">
     <!-- Third party script for BrowserPlus runtime (Google Gears included in Gears runtime now) -->
     <script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
-    <script type="text/javascript" src="/js/plupload/js/plupload.full.js"></script>
+    <script type="text/javascript" src="${ctx.conf['cdn.plupload.js']}"></script>
 
     <script src="/js/app.js"></script>
 </%block>
