@@ -18,3 +18,10 @@ def load_database(ctx):
     db = connection[ctx.conf['database.name']]
     suq.monpyjama.Wrapper.db = db
     return db
+
+
+def load_database_webrokeit(ctx):
+    connection = pymongo.Connection(
+        host=ctx.conf['webrokeit.database.host_name'], port=ctx.conf['webrokeit.database.port'])
+    db = connection[ctx.conf['webrokeit.database.name']]
+    return db

@@ -14,8 +14,7 @@ class Projects(Mapper, Wrapper):
 
     filename = None
     slug = None
-    status = False
-    step = 0
+    status = None
     upload_at = None
 
     def save(self, *args, **kwargs):

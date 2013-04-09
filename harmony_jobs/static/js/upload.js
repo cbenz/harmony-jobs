@@ -32,7 +32,6 @@ $(function () {
 	flash_swf_url : '/js/plupload/js/plupload.flash.swf',
 	silverlight_xap_url : '/js/plupload/js/plupload.silverlight.xap',
 	filters : [
-	    {title : "Image files", extensions : "jpg,gif,png"}, // for debug only
 	    {title : "Zip files", extensions : "zip"}
 	]
     });
@@ -124,8 +123,8 @@ $(function () {
         $('#' + file.id).data('id', file_info.id);
 	$('#' + file.id + ' .bar').css('width', '100%');
 
-        $('#fileslist tbody tr td:last').html('<span class="label label-success">Succès</span> 100%');
-        $('#create').show().attr('href', '/projects/' + file_info.slug + '/jobs');
+        $('#fileslist tbody tr td:last').html('<span class="label label-success">Upload success</span> 100%');
+        $('#create').show().attr('href', '/projects/' + file_info.slug + '/status');
     });
 
     uploader.bind('Error', function(up, err) {

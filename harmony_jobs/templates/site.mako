@@ -9,7 +9,7 @@ import collections
 <%def name="topbar()">
 <%
 menu_entries = collections.OrderedDict([
-  ('/projects/create', u'Créer un projet'),
+  ('/projects/create', u'Create a project'),
   ])
 %>
 <div class="navbar navbar-fixed-top">
@@ -31,11 +31,11 @@ menu_entries = collections.OrderedDict([
 
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%block name="title_content">Harmony Jobs</%block></title>
+    <title><%block name="title_content">${ctx.conf['app_name']}</%block></title>
     <link rel="stylesheet" href="${ctx.conf['cdn.bootstrap.css']}">
     <%block name="css"/>
     <link rel="stylesheet" href="/css/style.css">

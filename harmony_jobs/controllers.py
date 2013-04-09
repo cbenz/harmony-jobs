@@ -5,14 +5,19 @@ import babel.dates
 import bson
 import datetime
 import formencode
+import logging
 import os
 import simplejson as json
+import urllib, urllib2
 import urlparse
 from pytz import timezone
 from webob.dec import wsgify
 
 from . import conv, router, templates, wsgi_helpers
 from .model import Projects
+
+
+log = logging.getLogger(os.path.basename(__file__))
 
 
 @wsgify
@@ -44,20 +49,70 @@ def feed(req):
 
 
 @wsgify
-def jobs(req):
+def status(req):
     slug = req.urlvars.get('slug')
 
-    # FIXME: should be done one time, when project is created
     project = Projects.find_one({'slug': slug})
-    project.status = True
-    project.step = 0
-    project.save()
+    if not project.status:
+        # should be done one time, when project is created
+        project.status = 'PENDING'
+        project.save()
+
+        # Emit the shapefile:ready event
+        event_parameters = {
+            'file_path': os.path.join(req.ctx.conf['cache_dir'], 'upload', project.filename),
+            'project_id': project.slug,
+            }
+        emit_url_data = {
+            'event_name': 'shapefile:archive:ready',
+            'event_parameters': json.dumps(event_parameters),
+            }
+        urllib2.urlopen(req.ctx.conf['webrokeit.urls.emit'], urllib.urlencode(emit_url_data))
+        log.debug(u'Event "shapefile:archive:ready" emitted with parameters: {0}.'.format(event_parameters))
 
     return templates.render(
         req.ctx,
-        '/jobs.mako',
+        '/status.mako',
         project = project
     )
+
+
+@wsgify
+def progress(req):
+    slug = req.urlvars.get('slug')
+    show, error = conv.guess_bool(req.GET.get('show', 'false'))
+
+    project = Projects.find_one({'slug': slug})
+
+    tasks_collection = req.ctx.db_webrokeit[req.ctx.conf['webrokeit.database.collections.tasks']]
+    counters = {}
+    for status in tasks_collection.distinct('status'):
+        counters[status] = tasks_collection.find(
+            {'event_parameters.project_id': project.slug, 'status': status}).count()
+
+    tasks = tasks_collection.find({'event_parameters.project_id': project.slug}).sort([('date', -1)])
+
+    if counters.get('COMPLETE', 0) == tasks.count():
+        project.status = 'COMPLETE'
+        project.save()
+    elif counters.get('ERROR', 0) > 0:
+        project.status = 'ERROR'
+        project.save()
+    elif counters.get('RUNNING', 0) > 0:
+        project.status = 'RUNNING'
+        project.save()
+
+    html = templates.render_def(
+        req.ctx,
+        '/status.mako',
+        'progress',
+        counters = counters,
+        project = project,
+        show = show,
+        tasks = tasks_collection.find({'event_parameters.project_id': project.slug}).sort([('date', -1)])
+    )
+
+    return wsgi_helpers.respond_json(req.ctx, {'html': html, 'done': counters.get('PENDING', 0) == 0})
 
 
 @wsgify
@@ -73,14 +128,22 @@ def upload(req):
             print e
         else:
             project = Projects()
-            project.filename = fs.filename
-            project.status = False
+            project.filename = fs.filename # temporary filename used to compute slug, will be changed below
             project_id = project.save(safe=True)
 
-            # FIXME: check if upload folder exists
-            f = open(os.path.join(req.ctx.conf['cache_dir'], 'upload', str(project_id)), 'w+')
+            upload_dir = os.path.join(req.ctx.conf['cache_dir'], 'upload')
+            if (not os.path.exists(upload_dir)):
+                os.mkdir(upload_dir)
+
+            # concat mongodb _id and uploaded file's name to compute a new unique filename
+            filename = '%s-%s' % (project_id, fs.filename)
+            f = open(os.path.join(upload_dir, filename), 'w+')
             f.write(fs.file.read())
             f.close()
+
+            # update filename
+            project.filename = filename
+            project.save(safe=True)
 
             result = [dict(
                 id = str(project_id),
@@ -95,18 +158,18 @@ def upload(req):
 @wsgify
 def remove(req):
     obj_id = req.GET['id']
+    project = Projects.find_one({'_id': bson.objectid.ObjectId(obj_id)})
 
-    path = os.path.join(req.ctx.conf['cache_dir'], 'upload', obj_id)
+    path = os.path.join(req.ctx.conf['cache_dir'], 'upload', project.filename)
     os.remove(path)
 
-    project = Projects.find_one({'_id': bson.objectid.ObjectId(obj_id)})
-    if project.status:
-        # if status is True, remove request comes from projects page
+    if project.status is not None:
+        # if status is not None, remove request comes from projects page
         # a redirect to homepage is needed
         project.delete()
         return wsgi_helpers.redirect(req.ctx, location='/')
     else:
-        # if status is False, project is not yet created
+        # if status is None, project is not yet created
         # remove request comes from create page
         project.delete()
 
@@ -125,7 +188,8 @@ def make_router():
     """Return a WSGI application that dispatches requests to controllers """
     return router.make_router(
         ('GET', '^/?$', index),
-        ('GET', '^/projects/(?P<slug>.+)/jobs', jobs),
+        ('GET', '^/projects/(?P<slug>.+)/status', status),
+        ('GET', '^/projects/(?P<slug>.+)/progress', progress),
         ('GET', '^/projects/create', create),
         ('GET', '^/projects/feed', feed),
         ('GET', '^/projects/remove/?$', remove),

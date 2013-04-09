@@ -37,7 +37,7 @@ def render(ctx, template_path, **kw):
 
 def render_def(ctx, template_path, def_name, **kw):
     return ctx.templates.get_template(template_path).get_def(def_name).render_unicode(
-        _=ctx.translator.ugettext,
+        _=ctx._, #translator.ugettext,
         ctx=ctx,
         js=js,
         N_=lambda message: message,

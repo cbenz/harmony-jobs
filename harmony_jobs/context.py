@@ -20,7 +20,6 @@ def make_add_context_to_request(app, app_ctx):
 
 class Context(object):
     _ = lambda self, message: message
-    mb_formation_menu_html = None
 
     @classmethod
     def from_ctx(cls, ctx):

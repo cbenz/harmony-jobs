@@ -31,6 +31,7 @@ def make_app(global_conf, **app_conf):
     app_ctx.load_assets()
     logging.basicConfig(level=app_ctx.conf['log_level'], stream=sys.stdout)
     app_ctx.db = database.load_database(app_ctx)
+    app_ctx.db_webrokeit = database.load_database_webrokeit(app_ctx)
     app_ctx.templates = templates.load_templates(app_ctx)
     database.ensure_indexes(app_ctx)
     #model.init_xxx(app_ctx)
