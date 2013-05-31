@@ -5,7 +5,8 @@
 
 
 import pymongo
-import suq.monpyjama
+
+from . import model
 
 
 def ensure_indexes(ctx):
@@ -16,7 +17,7 @@ def ensure_indexes(ctx):
 def load_database(ctx):
     connection = pymongo.Connection(host=ctx.conf['database.host_name'], port=ctx.conf['database.port'])
     db = connection[ctx.conf['database.name']]
-    suq.monpyjama.Wrapper.db = db
+    model.Wrapper.db = db
     return db
 
 

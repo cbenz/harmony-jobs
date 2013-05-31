@@ -25,7 +25,7 @@
     </header>
 
     <hr>
-    <h3>File ${project.filename}</h3>
+    <h3>${project.slug}</h3>
 
     <div id="progress" data-id="${project.slug}">
     </div>
@@ -34,7 +34,7 @@
 
 <%block name="progress">
     % if project.status == 'COMPLETE':
-Completed <a href="#">View</a>
+Completed <a href="${ctx.conf['harmony_viewer.urls.base']}/${project.slug}">View on map</a>
     % else:
 <%
 if counters.get('ERROR'):

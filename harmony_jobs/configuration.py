@@ -9,7 +9,8 @@ import os
 import urlparse
 
 from biryani1 import strings
-from biryani1.baseconv import (check, cleanup_line, default, function, guess_bool, input_to_int, noop, pipe, struct)
+from biryani1.baseconv import (check, cleanup_line, default, function, guess_bool, input_to_int, noop, not_none, pipe,
+        struct)
 
 
 def load_configuration(global_conf, app_conf):
@@ -31,6 +32,7 @@ def load_configuration(global_conf, app_conf):
             'database.port': pipe(input_to_int, default(27017)),
             'debug': pipe(guess_bool, default(False)),
             'global_conf': default(global_conf),
+            'harmony_viewer.urls.base': pipe(cleanup_line, not_none),
             'log_level': pipe(
                 default('WARNING'),
                 function(lambda log_level: getattr(logging, log_level.upper())),

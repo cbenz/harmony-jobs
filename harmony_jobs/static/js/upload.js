@@ -124,7 +124,7 @@ $(function () {
 	$('#' + file.id + ' .bar').css('width', '100%');
 
         $('#fileslist tbody tr td:last').html('<span class="label label-success">Upload success</span> 100%');
-        $('#create').show().attr('href', '/projects/' + file_info.slug + '/status');
+        $('#create').show().attr('href', '/projects/' + file_info.slug);
     });
 
     uploader.bind('Error', function(up, err) {

@@ -11,7 +11,7 @@ from weberror.errormiddleware import ErrorMiddleware
 from paste.cascade import Cascade
 from paste.urlparser import StaticURLParser
 
-from . import configuration, context, controllers, database, model, templates
+from . import configuration, context, controllers, database, templates
 
 
 def make_app(global_conf, **app_conf):
@@ -28,7 +28,6 @@ def make_app(global_conf, **app_conf):
     """
     app_ctx = context.Context()
     app_ctx.conf = configuration.load_configuration(global_conf, app_conf)
-    app_ctx.load_assets()
     logging.basicConfig(level=app_ctx.conf['log_level'], stream=sys.stdout)
     app_ctx.db = database.load_database(app_ctx)
     app_ctx.db_webrokeit = database.load_database_webrokeit(app_ctx)

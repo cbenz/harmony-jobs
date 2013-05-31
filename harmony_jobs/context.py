@@ -27,6 +27,3 @@ class Context(object):
         for key, value in ctx.__dict__.iteritems():
             new_ctx.__dict__[key] = value
         return new_ctx
-
-    def load_assets(self):
-        pass

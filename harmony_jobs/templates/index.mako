@@ -45,7 +45,7 @@
 % for project in projects:
     % if project.status == 'COMPLETE':
       <tr>
-        <td><a href="/projects/${project.slug}/status">${project.slug}</a></td>
+        <td><a href="/projects/${project.slug}">${project.slug}</a></td>
       </tr>
     % endif
 % endfor

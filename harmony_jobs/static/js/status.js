@@ -25,5 +25,5 @@ $(function () {
                 clearInterval(progressInterval);
             }
         });
-    }, 2500);
+    }, 250);
 });

@@ -6,10 +6,15 @@ import datetime
 from biryani1.strings import slugify
 from biryani1.baseconv import check
 from biryani1.objectconv import object_to_clean_dict
-from suq.monpyjama import Mapper, Wrapper
+import suq.monpyjama
 
 
-class Projects(Mapper, Wrapper):
+class Wrapper(suq.monpyjama.Wrapper):
+    pass
+
+
+# TODO Rename to Project.
+class Projects(suq.monpyjama.Mapper, Wrapper):
     collection_name = 'projects'
 
     filename = None

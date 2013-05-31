@@ -9,7 +9,7 @@ from paste.deploy import loadapp
 import pymongo
 
 import harmony_jobs
-from harmony_jobs.model import Jobs
+from harmony_jobs.model import Projects
 
 
 base_dir = os.path.abspath(os.path.dirname(__file__))

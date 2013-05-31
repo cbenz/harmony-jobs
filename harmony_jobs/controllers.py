@@ -2,21 +2,24 @@
 
 
 import babel.dates
+from biryani1.baseconv import guess_bool
 import bson
 import datetime
 import formencode
 import logging
 import os
 import simplejson as json
-import urllib, urllib2
+import urllib
+import urllib2
 import urlparse
 from pytz import timezone
 from webob.dec import wsgify
 
-from . import conv, router, templates, wsgi_helpers
+from . import router, templates, wsgi_helpers
 from .model import Projects
 
 
+N_ = lambda message: message
 log = logging.getLogger(os.path.basename(__file__))
 
 
@@ -50,10 +53,13 @@ def feed(req):
 
 @wsgify
 def status(req):
+    ctx = req.ctx
     slug = req.urlvars.get('slug')
 
     project = Projects.find_one({'slug': slug})
-    if not project.status:
+    if project is None:
+        return wsgi_helpers.bad_request(ctx, comment=N_(u'Invalid project'))
+    if project.status is None:
         # should be done one time, when project is created
         project.status = 'PENDING'
         project.save()
@@ -80,7 +86,7 @@ def status(req):
 @wsgify
 def progress(req):
     slug = req.urlvars.get('slug')
-    show, error = conv.guess_bool(req.GET.get('show', 'false'))
+    show, error = guess_bool(req.GET.get('show', 'false'))
 
     project = Projects.find_one({'slug': slug})
 
@@ -128,7 +134,7 @@ def upload(req):
             print e
         else:
             project = Projects()
-            project.filename = fs.filename # temporary filename used to compute slug, will be changed below
+            project.filename = fs.filename  # temporary filename used to compute slug, will be changed below
             project_id = project.save(safe=True)
 
             upload_dir = os.path.join(req.ctx.conf['cache_dir'], 'upload')
@@ -151,7 +157,7 @@ def upload(req):
                 slug = project.slug,
                 size = len(fs.file.read()),
                 )]
-        
+
     return wsgi_helpers.respond_json(req.ctx, {'files': result})
 
 
@@ -188,10 +194,10 @@ def make_router():
     """Return a WSGI application that dispatches requests to controllers """
     return router.make_router(
         ('GET', '^/?$', index),
-        ('GET', '^/projects/(?P<slug>.+)/status', status),
-        ('GET', '^/projects/(?P<slug>.+)/progress', progress),
-        ('GET', '^/projects/create', create),
-        ('GET', '^/projects/feed', feed),
+        ('GET', '^/projects/create$', create),
+        ('GET', '^/projects/feed$', feed),
         ('GET', '^/projects/remove/?$', remove),
-        ('POST', '^/projects/upload', upload),
+        ('POST', '^/projects/upload$', upload),
+        ('GET', '^/projects/(?P<slug>[a-z0-9-]+)/?$', status),
+        ('GET', '^/projects/(?P<slug>[a-z0-9-]+)/progress$', progress),
     )
