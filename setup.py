@@ -41,7 +41,7 @@ setup(
     keywords='harmony jobs osm shapefile drop gis',
     license=u'http://www.fsf.org/licensing/licenses/agpl-3.0.html',
     long_description='\n'.join(doc_lines[2:]),
-    name=u'Harmony-Jobs',
+    name=u'HarmonyJobs',
     packages=find_packages(),
     paster_plugins=['PasteScript'],
     setup_requires=['PasteScript >= 1.6.3'],
